@@ -88,3 +88,13 @@ app.post("/upload", multipleUpload, function(req, res) {
 const port = 8080;
 app.listen(port, () => console.log("Server listening on port " + port));
 
+
+https://gist.github.com/adon-at-work/26c8a8e0a1aee5ded03c
+
+https://programmingwithmosh.com/javascript/react-file-upload-proper-server-side-nodejs-easy/
+
+https://medium.com/@salonimalhotra1ind/uploading-a-file-multiple-to-amazon-web-services-aws-s3-bucket-with-node-js-in-express-8e268ab12422
+
+
+https://medium.com/@imranhsayed/file-or-image-uploads-on-amazon-web-services-aws-using-react-node-and-express-js-aws-sdk-252742286162
+
