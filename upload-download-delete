@@ -1,0 +1,75 @@
+let storage = multer.memoryStorage({
+  destination: function(req, file, cb) {
+    cb(null, `${__dirname}/mcqueen/`);
+  }
+});
+
+app.post("/upload", function(req, res) {
+  let upload = multer({ storage: storage }).array("file");
+  upload(req, res, function(err) {
+    let filename = req.body.name;
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json(err);
+    } else if (err) {
+      return res.status(500).json(err);
+    }
+
+    let files = req.files;
+
+    files.map(item => {
+      const buffer = item.buffer;
+
+      // file upload to S3 bucket start
+
+      // file upload to s3 bucket end
+
+      fs.writeFile(
+        `${__dirname}/mcqueen/` + filename,
+        buffer,
+        "binary",
+        function(err) {
+          if (err) throw err;
+          res.end("File is uploaded");
+        }
+      );
+    });
+
+    return res.status(200).send();
+  });
+});
+
+app.get("/upload", (req, res, next) => {
+  const filepath = req.query.form ? req.query.form : "";
+  var uploadDir = `${__dirname}/mcqueen/`;
+  if (filepath !== "") {
+    var path = `${uploadDir}/${decodeURIComponent(filepath)}`;
+    fs.stat(path, function(err, stat) {
+      if (err) {
+        return next(err);
+      }
+      res.set("Content-Length", stat.size);
+      fs.createReadStream(path).pipe(res);
+    });
+  } else {
+    res.status(200).send("there is no files to download");
+  }
+});
+
+app.delete("/upload", function(req, res, next) {
+  const filepath = req.query.form ? req.query.form : "";
+  var uploadDir = "./test/";
+  if (filepath !== "") {
+    var path = `${uploadDir}/${decodeURIComponent(filepath)}`;
+    try {
+      // unlink from S3 bucket
+
+      // unlink from folder
+      fs.unlinkSync(path);
+      res.send("file deleted");
+    } catch (err) {
+      console.error(err);
+    }
+  } else {
+    res.status(200).send("there is no files to delete");
+  }
+});
