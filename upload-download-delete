@@ -1,3 +1,5 @@
+//follow this link: https://github.com/tabvn/fileapp-reactjs/blob/master/api/src/s3.js
+
 let storage = multer.memoryStorage({
   destination: function(req, file, cb) {
     cb(null, `${__dirname}/mcqueen/`);
@@ -43,13 +45,23 @@ app.get("/upload", (req, res, next) => {
   var uploadDir = `${__dirname}/mcqueen/`;
   if (filepath !== "") {
     var path = `${uploadDir}/${decodeURIComponent(filepath)}`;
-    fs.stat(path, function(err, stat) {
-      if (err) {
-        return next(err);
-      }
-      res.set("Content-Length", stat.size);
-      fs.createReadStream(path).pipe(res);
-    });
+    res.attachment(path);
+    
+    // for file 
+    const options = {
+      Bucket: s3Bucket,
+      Key: "fileName"
+    };
+    const fileObject = s3.getObject(options).createReadStream();
+    fileObject.pipe(response);
+
+    // fs.stat(path, function(err, stat) {
+    //   if (err) {
+    //     return next(err);
+    //   }
+    //   res.set("Content-Length", stat.size);
+    //   fs.createReadStream(path).pipe(res);
+    // });
   } else {
     res.status(200).send("there is no files to download");
   }
